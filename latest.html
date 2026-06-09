@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投资分析日报 — 2026-06-09</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2d3e;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --gold: #f59e0b;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --up: #22c55e;
+      --down: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+    header .meta { color: var(--muted); font-size: 12px; text-align: right; }
+
+    /* Summary bar */
+    .summary-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      flex: 1;
+      min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .summary-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; }
+    .summary-card .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+    .risk-低 { color: var(--green); }
+    .risk-中 { color: var(--gold); }
+    .risk-高 { color: var(--red); }
+
+    /* Section */
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      padding-left: 10px;
+      border-left: 3px solid var(--blue);
+    }
+
+    /* Instrument cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .card.up::before { background: var(--green); }
+    .card.down::before { background: var(--red); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .card-name { font-weight: 700; font-size: 15px; }
+    .card-code { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .card-price { text-align: right; }
+    .card-price .price { font-size: 20px; font-weight: 700; }
+    .card-price .change { font-size: 13px; font-weight: 600; margin-top: 2px; }
+    .up-text { color: var(--green); }
+    .down-text { color: var(--red); }
+
+    .ohlc { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+    .ohlc-item { font-size: 12px; }
+    .ohlc-item .k { color: var(--muted); }
+
+    /* Chart */
+    .chart-wrap { margin: 10px 0 4px; position: relative; }
+    .chart-wrap canvas { width: 100%; height: 72px; display: block; border-radius: 4px; }
+
+    /* Alipay badge */
+    .alipay-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(22,119,255,.12);
+      color: #1677ff;
+      border: 1px solid rgba(22,119,255,.3);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* Action badge */
+    .action-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .action-买入 { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+    .action-持有 { background: rgba(59,130,246,.15); color: var(--blue); border: 1px solid rgba(59,130,246,.3); }
+    .action-减仓 { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+    .action-观望 { background: rgba(136,146,164,.15); color: var(--muted); border: 1px solid rgba(136,146,164,.3); }
+
+    .action-reason { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+
+    /* Prediction */
+    .predictions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pred-box {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .pred-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+    .pred-direction { font-size: 13px; font-weight: 700; }
+    .pred-range { font-size: 12px; color: var(--gold); }
+    .pred-conf { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .pred-conf span { color: var(--text); }
+    .conf-高 span { color: var(--green); }
+    .conf-中 span { color: var(--gold); }
+    .conf-低 span { color: var(--red); }
+
+    .support-resistance { display: flex; gap: 12px; margin-top: 10px; font-size: 12px; }
+    .sr-item .k { color: var(--muted); }
+    .sr-item .v { font-weight: 600; }
+
+    /* Allocation */
+    .allocation-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .alloc-bars { display: flex; gap: 6px; height: 10px; border-radius: 5px; overflow: hidden; margin: 12px 0; }
+    .alloc-bar { height: 100%; border-radius: 5px; transition: width .3s; }
+    .bar-nasdaq { background: var(--blue); }
+    .bar-gold { background: var(--gold); }
+    .bar-cash { background: var(--border); }
+    .alloc-legend { display: flex; gap: 20px; flex-wrap: wrap; }
+    .alloc-legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .alloc-reason { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    /* Risk / Events */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .info-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+
+    /* Expert Advice */
+    .expert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 0; }
+    .expert-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .expert-card.nasdaq { border-top: 3px solid var(--blue); }
+    .expert-card.gold { border-top: 3px solid var(--gold); }
+    .expert-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .timing-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 4px;
+      font-size: 11px; font-weight: 700;
+    }
+    .timing-现在 { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+    .timing-等待 { background: rgba(245,158,11,.15); color: var(--gold); border: 1px solid rgba(245,158,11,.3); }
+    .timing-不建议 { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+    .expert-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+    .expert-row:last-of-type { border-bottom: none; }
+    .expert-row .ek { color: var(--muted); flex-shrink: 0; margin-right: 8px; }
+    .expert-row .ev { text-align: right; color: var(--text); font-weight: 500; }
+    .expert-summary {
+      margin-top: 12px; padding: 10px 12px;
+      background: rgba(255,255,255,.04); border-radius: 6px;
+      font-size: 13px; line-height: 1.6; color: var(--text);
+      border-left: 3px solid var(--blue);
+    }
+    .expert-card.gold .expert-summary { border-left-color: var(--gold); }
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .info-box h4 { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .8px; }
+    .info-box p { font-size: 13px; line-height: 1.6; }
+    .info-box.warning { border-color: rgba(239,68,68,.3); }
+    .info-box.warning h4 { color: var(--red); }
+
+    footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    @media (max-width: 640px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .summary-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div>
+      <h1>📊 投资分析日报</h1>
+      <div style="color:var(--muted);font-size:13px;margin-top:4px;">纳指基金 · 黄金ETF 每日追踪</div>
+    </div>
+    <div class="meta">
+      <div>2026-06-09</div>
+      <div>生成于 2026-06-09 17:49:56</div>
+    </div>
+  </header>
+
+  
+
+  <!-- Summary Bar -->
+  <div class="summary-bar">
+    <div class="summary-card">
+      <div class="label">市场综述</div>
+      <div style="font-size:14px;margin-top:6px;line-height:1.5;">纳指ETF单日暴跌约4.8%，黄金ETF同步下跌3.4%，两类资产同步大幅回调，市场整体风险偏好急剧收缩，疑似受重大宏观事件冲击。</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">整体风险</div>
+      <div class="value risk-高">高</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">建议仓位</div>
+      <div style="margin-top:6px;font-size:13px;">
+        纳指 <strong style="color:var(--blue)">20%</strong> &nbsp;
+        黄金 <strong style="color:var(--gold)">20%</strong> &nbsp;
+        现金 <strong style="color:var(--muted)">60%</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nasdaq ETFs -->
+  
+  
+  
+  
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+  <!-- Build a lookup for market data by code -->
+  
+  
+  
+
+  
+  
+  <div class="section">
+    <div class="section-title">纳指相关 ETF</div>
+    <div class="cards">
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                纳指ETF(场内参考)
+                
+              </div>
+            <div class="card-code">513100</div>
+          </div>
+          <div class="card-price">
+            <div class="price">1.971</div>
+            
+            <div class="change down-text">
+              -4.81%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>1.971</div>
+          <div class="ohlc-item"><span class="k">收 </span>1.971</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">1.971</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">1.971</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="1.8464,1.8362,1.8723,1.8699,1.8513,1.8625,1.8812,1.9576,1.9531,1.9993,2.0042,1.9856,2.0063,2.02,1.9896,1.9811,1.9675,2.0006,2.0035,2.0126,2.0109,2.0453,2.0435,2.0591,2.0646,2.0764,2.087,2.0808,2.0707,1.971"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">单日跌幅高达4.81%，且开高低收均为同一价格，呈现跳空低开特征，说明市场情绪极度悲观。近5日累计跌幅约5.1%，短期趋势破位，暂不具备入场条件，等待恐慌情绪释放后的企稳信号。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1.5%~+1.5%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-6%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">1.88</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">2.05</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                国泰纳斯达克100(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">160213</div>
+          </div>
+          <div class="card-price">
+            <div class="price">4.411</div>
+            
+            <div class="change down-text">
+              -4.81%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>4.411</div>
+          <div class="ohlc-item"><span class="k">收 </span>4.411</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">4.411</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">4.411</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="4.135,4.113,4.194,4.188,4.146,4.171,4.214,4.386,4.376,4.479,4.49,4.448,4.495,4.525,4.457,4.438,4.407,4.483,4.488,4.507,4.504,4.579,4.575,4.609,4.621,4.646,4.67,4.656,4.634,4.411"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">单日跌幅4.81%，与场内ETF同步，QDII产品存在T+1申赎限制，流动性更差，当前大幅下跌时不宜盲目抄底，等待市场企稳后再行布局。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1.5%~+1.5%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-5%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">4.18</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">4.6</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                广发纳斯达克100联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">270042</div>
+          </div>
+          <div class="card-price">
+            <div class="price">8.1154</div>
+            
+            <div class="change down-text">
+              -4.8%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>8.1154</div>
+          <div class="ohlc-item"><span class="k">收 </span>8.1154</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">8.1154</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">8.1154</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="7.6078,7.5671,7.7135,7.7008,7.6251,7.6704,7.7463,8.0609,8.043,8.2334,8.2533,8.1765,8.2621,8.3191,8.1939,8.1598,8.1029,8.2382,8.2497,8.2866,8.2801,8.4202,8.4132,8.4773,8.5006,8.5489,8.5927,8.5667,8.5243,8.1154"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">近5日累计跌幅约5.1%，今日单日即贡献4.8%跌幅，说明此前积累的涨幅已快速回吐。QDII联接基金申赎有延迟，当前阶段观望为宜，等待底部确认信号。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1.5%~+1.5%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-5%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">7.7</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">8.42</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                易方达纳斯达克100联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">006479</div>
+          </div>
+          <div class="card-price">
+            <div class="price">7.9765</div>
+            
+            <div class="change down-text">
+              -4.8%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>7.9765</div>
+          <div class="ohlc-item"><span class="k">收 </span>7.9765</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">7.9765</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">7.9765</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="7.4793,7.4392,7.5831,7.5705,7.4961,7.5406,7.6152,7.9242,7.9065,8.0937,8.1131,8.0375,8.1217,8.1777,8.0546,8.021,7.9649,8.0978,8.1091,8.1454,8.1388,8.2765,8.2695,8.3325,8.3554,8.4028,8.4458,8.4202,8.3785,7.9765"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">与同类产品同步大幅下跌4.8%，技术面破位明显，暂无企稳信号。建议持仓者不急于补仓，等待量能和价格双重确认后再行操作。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1.5%~+1.5%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-5%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">7.6</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">8.28</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                华夏纳斯达克100联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">007968</div>
+          </div>
+          <div class="card-price">
+            <div class="price">1.4414</div>
+            
+            <div class="change down-text">
+              -2.02%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>1.4414</div>
+          <div class="ohlc-item"><span class="k">收 </span>1.4414</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">1.4414</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">1.4414</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="1.5328,1.5325,1.541,1.5317,1.5541,1.5505,1.5669,1.5657,1.5517,1.567,1.5603,1.5724,1.5564,1.5368,1.5337,1.5434,1.5508,1.519,1.5341,1.5366,1.529,1.5177,1.5225,1.5148,1.5099,1.5069,1.4992,1.4804,1.4711,1.4414"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">今日跌幅仅2.02%，显著低于同类产品4.8%的跌幅，可能与估值方式或汇率对冲机制不同有关，需注意可能存在估值滞后风险，实际净值或存在补跌可能，暂不建议介入。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-2%~-3%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-4%~-6%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">1.38</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">1.5</span></div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  
+  
+  
+  <div class="section">
+    <div class="section-title">黄金 ETF</div>
+    <div class="cards">
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                黄金ETF华安(场内参考)
+                
+              </div>
+            <div class="card-code">518880</div>
+          </div>
+          <div class="card-price">
+            <div class="price">8.9668</div>
+            
+            <div class="change down-text">
+              -3.43%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>8.9668</div>
+          <div class="ohlc-item"><span class="k">收 </span>8.9668</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">8.9668</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">8.9668</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="9.8937,9.8527,9.89,9.7328,9.6291,9.6641,9.7904,9.9046,9.8386,9.7791,9.8047,9.8184,9.8058,9.5898,9.5289,9.5128,9.3885,9.4497,9.456,9.5019,9.4539,9.3638,9.1664,9.3866,9.3449,9.4095,9.2702,9.2862,9.2851,8.9668"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">黄金单日跌幅达3.43%，在股市大跌背景下黄金未能发挥避险功能，说明此次下跌可能源于流动性危机或强制平仓，黄金的避险逻辑短期受损，需等待情绪稳定后重新评估。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1%~+2%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-2%~+3%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">8.6</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">9.28</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                华安黄金易ETF联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">000216</div>
+          </div>
+          <div class="card-price">
+            <div class="price">3.2629</div>
+            
+            <div class="change down-text">
+              -3.36%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>3.2629</div>
+          <div class="ohlc-item"><span class="k">收 </span>3.2629</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">3.2629</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">3.2629</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="3.5992,3.5841,3.5974,3.542,3.503,3.5133,3.5595,3.601,3.5797,3.557,3.5676,3.5707,3.5659,3.4885,3.465,3.4601,3.4146,3.4382,3.4394,3.4561,3.4393,3.4064,3.3344,3.413,3.4007,3.4201,3.3726,3.3775,3.3763,3.2629"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">单日跌幅3.36%，近5日累计跌幅约4.6%，短期趋势转弱。QDII产品申赎延迟，当前不适合仓促操作，建议等待国际金价企稳信号后再考虑布局。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1%~+2%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-2%~+3%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">3.12</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">3.38</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                易方达黄金ETF联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">001508</div>
+          </div>
+          <div class="card-price">
+            <div class="price">2.936</div>
+            
+            <div class="change down-text">
+              -2.13%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>2.936</div>
+          <div class="ohlc-item"><span class="k">收 </span>2.936</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">2.936</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">2.936</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="3.243,3.227,3.233,3.237,3.261,3.24,3.268,3.267,3.264,3.287,3.261,3.266,3.226,3.197,3.165,3.17,3.173,3.115,3.142,3.142,3.139,3.121,3.127,3.093,3.071,3.066,3.035,2.999,3.0,2.936"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">今日跌幅2.13%，相对温和，近5日从3.066跌至2.936，累计跌约4.2%，趋势偏弱但跌幅相对可控，目前仍需观察金价方向，暂不介入。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-1%~+1.5%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">震荡</div>
+            <div class="pred-range">-2%~+3%</div>
+            <div class="pred-conf conf-低">置信度 <span>低</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">2.8</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">3.05</span></div>
+        </div>
+        
+      </div>
+      
+      
+      
+      <div class="card down">
+        <div class="card-header">
+          <div>
+            <div class="card-name">
+                广发黄金ETF联接(QDII)
+                <span class="alipay-badge">支付宝可买</span>
+              </div>
+            <div class="card-code">013257</div>
+          </div>
+          <div class="card-price">
+            <div class="price">1.0214</div>
+            
+            <div class="change down-text">
+              -0.27%
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="ohlc">
+          <div class="ohlc-item"><span class="k">开 </span>1.0214</div>
+          <div class="ohlc-item"><span class="k">收 </span>1.0214</div>
+          <div class="ohlc-item"><span class="k">高 </span><span style="color:var(--green)">1.0214</span></div>
+          <div class="ohlc-item"><span class="k">低 </span><span style="color:var(--red)">1.0214</span></div>
+        </div>
+        
+        <div class="chart-wrap">
+          <canvas class="price-chart"
+            data-prices="1.0156,1.0167,1.0175,1.0176,1.0197,1.0216,1.0247,1.027,1.0258,1.0276,1.0281,1.0293,1.0263,1.0255,1.026,1.0279,1.0298,1.0266,1.0284,1.0296,1.0308,1.0281,1.0291,1.0251,1.0234,1.0244,1.0251,1.0256,1.0242,1.0214"
+            data-up="false">
+          </canvas>
+        </div>
+        
+        
+
+        <div>
+          <span class="action-badge action-观望">观望</span>
+        </div>
+        <div class="action-reason">今日跌幅仅0.27%，与其他黄金ETF跌幅差异巨大（3%-3.4%），高度疑似估值滞后或数据异常，次日存在显著补跌风险，切勿以今日价格买入，风险极高。</div>
+
+        <div class="predictions">
+          <div class="pred-box">
+            <div class="pred-label">明日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-4%</div>
+            <div class="pred-conf conf-高">置信度 <span>高</span></div>
+          </div>
+          <div class="pred-box">
+            <div class="pred-label">5日预测</div>
+            <div class="pred-direction">下跌</div>
+            <div class="pred-range">-3%~-5%</div>
+            <div class="pred-conf conf-中">置信度 <span>中</span></div>
+          </div>
+        </div>
+
+        
+        <div class="support-resistance">
+          <div class="sr-item"><span class="k">支撑 </span><span class="v" style="color:var(--green)">0.96</span></div>
+          <div class="sr-item"><span class="k">压力 </span><span class="v" style="color:var(--red)">1.03</span></div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  
+  
+
+  <!-- Allocation -->
+  <div class="section">
+    <div class="section-title">资产配置建议</div>
+    <div class="allocation-card">
+      <div class="alloc-bars">
+        <div class="alloc-bar bar-nasdaq" style="width:20%"></div>
+        <div class="alloc-bar bar-gold" style="width:20%"></div>
+        <div class="alloc-bar bar-cash" style="width:60%"></div>
+      </div>
+      <div class="alloc-legend">
+        <div class="alloc-legend-item"><span class="dot" style="background:var(--blue)"></span>纳指 20%</div>
+        <div class="alloc-legend-item"><span class="dot" style="background:var(--gold)"></span>黄金 20%</div>
+        <div class="alloc-legend-item"><span class="dot" style="background:var(--border)"></span>现金 60%</div>
+      </div>
+      <div class="alloc-reason">当前市场处于高风险状态，纳指与黄金同步大幅下跌，两类资产均未显现企稳信号，且相关性异常上升（疑似流动性危机或重大宏观冲击）。建议大幅提高现金仓位至60%，保留少量纳指（20%）和黄金（20%）以防错过反弹，等待市场情绪平稳、触底企稳信号明确后再逐步加仓。</div>
+    </div>
+  </div>
+
+  <!-- Expert Advice -->
+  
+  <div class="section">
+    <div class="section-title">基金经理入场建议</div>
+    <div class="expert-grid">
+      
+      
+      <div class="expert-card nasdaq">
+        <div class="expert-title">
+          纳指基金
+          <span class="timing-badge timing-等待">等待入场</span>
+        </div>
+        <div class="expert-row"><span class="ek">入场条件</span><span class="ev">等待以下两个条件同步满足：①纳指ETF(513100)连续2日收盘价稳定在1.95以上，且出现放量阳线；②纳斯达克100指数在关键支撑区域（19000点附近）企稳，恐慌指数(VIX)从高点回落至25以下。</span></div>
+        <div class="expert-row"><span class="ek">建议价格区间</span><span class="ev">513100: 1.88-1.98 / 006479: 7.60-7.80</span></div>
+        <div class="expert-row"><span class="ek">建仓策略</span><span class="ev">分三批建仓：第一批（仓位的30%）在价格跌至支撑区1.88-1.92且出现止跌信号时建仓；第二批（30%）在价格企稳反弹确认趋势转好后加仓；第三批（40%）在价格突破前期阻力位2.05后追加。总仓位控制在可投资资金的20%-30%以内。</span></div>
+        <div class="expert-row"><span class="ek">止损位</span><span class="ev" style="color:var(--red)">以第一批建仓价下方3%-5%为止损位，例如第一批于1.90建仓，止损设于1.81。</span></div>
+        <div class="expert-row"><span class="ek">目标收益</span><span class="ev" style="color:var(--green)">短期目标2.05-2.10（+5%~+7%），中期目标回测前高2.08附近，若宏观环境改善3个月内有望收复全部失地。</span></div>
+        <div class="expert-summary">当前纳指暴跌后尚无企稳信号，建议耐心等待2日内出现放量止跌确认后再分批布局，切忌一次性满仓抄底。</div>
+      </div>
+      
+      
+      <div class="expert-card gold">
+        <div class="expert-title">
+          黄金ETF
+          <span class="timing-badge timing-等待">等待入场</span>
+        </div>
+        <div class="expert-row"><span class="ek">入场条件</span><span class="ev">等待以下条件满足：①国际金价（COMEX黄金期货）在2980-3050美元/盎司区间止跌企稳，连续2日收涨；②黄金ETF华安(518880)价格收复8.90以上并放量确认；③广发黄金ETF联接(013257)完成补跌与同类产品估值修复后再行参与。</span></div>
+        <div class="expert-row"><span class="ek">建议价格区间</span><span class="ev">518880: 8.60-8.90 / 000216: 3.12-3.22</span></div>
+        <div class="expert-row"><span class="ek">建仓策略</span><span class="ev">分两批建仓：第一批（40%）在黄金ETF跌至8.60-8.70强支撑区且出现止跌信号时建仓；第二批（60%）在价格企稳反弹、站上8.90后确认趋势后加仓。黄金仓位不超过总可投资资金的20%。</span></div>
+        <div class="expert-row"><span class="ek">止损位</span><span class="ev" style="color:var(--red)">以8.50为硬止损位（对应金价约2950美元/盎司附近），跌破则止损出局。</span></div>
+        <div class="expert-row"><span class="ek">目标收益</span><span class="ev" style="color:var(--green)">短期目标9.20-9.40（反弹+3%~+5%），中期若降息预期升温目标回测前高9.40+，3-6个月持有期预期收益5%-10%。</span></div>
+        <div class="expert-summary">黄金此次下跌若系流动性危机被动抛售所致，中期配置价值依然突出，但需等待补跌完成、价格企稳后分批买入，不建议今日仓促入场。</div>
+      </div>
+      
+    </div>
+  </div>
+  
+
+  <!-- Risk Warning & Key Events -->
+  <div class="section">
+    <div class="info-grid">
+      <div class="info-box warning">
+        <h4>⚠ 风险提示</h4>
+        <p>⚠️ 重要风险提示：①今日两类资产同步暴跌（纳指-4.8%、黄金-3.4%），相关性异常升高，疑似受重大宏观冲击（如地缘政治事件、美联储政策突变、经济数据超预期恶化等），请密切关注触发事件；②广发黄金ETF联接(013257)今日跌幅异常偏小，高度疑似估值滞后，次日补跌风险极大，严禁追买；③华夏纳斯达克100(007968)今日跌幅仅2%，同样存在次日补跌风险；④QDII产品存在申赎延迟，不适合在大波动行情中频繁操作；⑤当前市场波动率极高，任何仓位操作请严格控制单次投入规模，做好资金管理。</p>
+      </div>
+      <div class="info-box">
+        <h4>📅 近期关注</h4>
+        <p>①关注本周美联储官员讲话及利率预期变化；②关注美国5月CPI/PPI数据发布（若本周公布）；③关注触发本次暴跌的具体宏观事件后续进展；④关注美元指数走势（对黄金及纳指QDII均有直接影响）；⑤关注纳斯达克100指数关键支撑位（约19000-19500点）是否有效守住。</p>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Raw Data Snapshot -->
+  <div class="section">
+    <div class="section-title">今日行情快照</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="color:var(--muted);border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:8px 6px;">品种</th>
+          <th style="text-align:right;padding:8px 6px;">代码</th>
+          <th style="text-align:right;padding:8px 6px;">收盘</th>
+          <th style="text-align:right;padding:8px 6px;">涨跌</th>
+          <th style="text-align:right;padding:8px 6px;">日期</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">国泰纳斯达克100(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">160213</td>
+          <td style="text-align:right;padding:8px 6px;">4.411</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -4.81%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-05</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">广发纳斯达克100联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">270042</td>
+          <td style="text-align:right;padding:8px 6px;">8.1154</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -4.8%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-05</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">易方达纳斯达克100联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">006479</td>
+          <td style="text-align:right;padding:8px 6px;">7.9765</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -4.8%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-05</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">华夏纳斯达克100联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">007968</td>
+          <td style="text-align:right;padding:8px 6px;">1.4414</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -2.02%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-08</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">纳指ETF(场内参考)</td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">513100</td>
+          <td style="text-align:right;padding:8px 6px;">1.971</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -4.81%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-05</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">华安黄金易ETF联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">000216</td>
+          <td style="text-align:right;padding:8px 6px;">3.2629</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -3.36%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-08</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">易方达黄金ETF联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">001508</td>
+          <td style="text-align:right;padding:8px 6px;">2.936</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -2.13%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-08</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">广发黄金ETF联接(QDII) <span class="alipay-badge">支付宝</span></td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">013257</td>
+          <td style="text-align:right;padding:8px 6px;">1.0214</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -0.27%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-08</td>
+        </tr>
+        
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:8px 6px;">黄金ETF华安(场内参考)</td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">518880</td>
+          <td style="text-align:right;padding:8px 6px;">8.9668</td>
+          <td style="text-align:right;padding:8px 6px;" class="down-text">
+            -3.43%
+          </td>
+          <td style="text-align:right;padding:8px 6px;color:var(--muted);">2026-06-08</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    本报告由 Claude AI 自动生成，仅供参考，不构成投资建议。投资有风险，决策需谨慎。<br/>
+    数据来源: akshare（A股ETF）/ yfinance（美股ETF） &nbsp;·&nbsp; 分析模型: claude-opus-4-7
+  </footer>
+
+</div>
+<script>
+(function () {
+  function drawChart(canvas) {
+    const raw = canvas.dataset.prices;
+    const isUp = canvas.dataset.up === 'true';
+    if (!raw) return;
+    const prices = raw.split(',').map(Number).filter(n => !isNaN(n));
+    if (prices.length < 2) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width || canvas.offsetWidth || 240;
+    const H = 72;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const pad = { top: 8, bottom: 20, left: 4, right: 4 };
+    const cw = W - pad.left - pad.right;
+    const ch = H - pad.top - pad.bottom;
+
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const range = max - min || 1;
+
+    const color = isUp ? '#22c55e' : '#ef4444';
+    const colorFade = isUp ? 'rgba(34,197,94,' : 'rgba(239,68,68,';
+
+    // x/y helpers
+    const xAt = i => pad.left + (i / (prices.length - 1)) * cw;
+    const yAt = v => pad.top + (1 - (v - min) / range) * ch;
+
+    // filled gradient area
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+    grad.addColorStop(0, colorFade + '0.25)');
+    grad.addColorStop(1, colorFade + '0.02)');
+
+    ctx.beginPath();
+    ctx.moveTo(xAt(0), yAt(prices[0]));
+    for (let i = 1; i < prices.length; i++) ctx.lineTo(xAt(i), yAt(prices[i]));
+    ctx.lineTo(xAt(prices.length - 1), pad.top + ch);
+    ctx.lineTo(xAt(0), pad.top + ch);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // line
+    ctx.beginPath();
+    ctx.moveTo(xAt(0), yAt(prices[0]));
+    for (let i = 1; i < prices.length; i++) ctx.lineTo(xAt(i), yAt(prices[i]));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // last dot
+    const lx = xAt(prices.length - 1);
+    const ly = yAt(prices[prices.length - 1]);
+    ctx.beginPath();
+    ctx.arc(lx, ly, 3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // x-axis labels: first, mid, last date indices
+    ctx.fillStyle = 'rgba(136,146,164,0.8)';
+    ctx.font = `${9 * dpr / dpr}px sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.fillText('30日前', pad.left, H - 4);
+    ctx.textAlign = 'right';
+    ctx.fillText('今日', W - pad.right, H - 4);
+  }
+
+  function init() {
+    document.querySelectorAll('canvas.price-chart').forEach(drawChart);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
