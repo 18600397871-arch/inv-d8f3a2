@@ -1,0 +1,18 @@
+index.html
+  h_320889d93682ca 15-16,91
+latest.html
+  h_320889d93682ca 6,240-241,251,362,374,428,440,494,500,506,514,560,566,572,580,626,633,637-639,645,701,713,767,779,786,833,845,899,911,943,959-965,974-980,992,996
+report_2026-08-23.html
+  h_320889d93682ca 1-1206
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "86ea7ddaeb4e9819e7cd555c5b981c955ad8d3c4",
+  "prompts": {},
+  "humans": {
+    "h_320889d93682ca": {
+      "author": "Investment Agent <deploy@investment-agent>"
+    }
+  }
+}
